@@ -24,7 +24,7 @@
     <!-- Category filter tabs -->
     <div class="d-flex flex-wrap gap-2 mb-5">
       <a href="{% url 'services:list' %}"
-         class="btn btn-sm {% if not active_category %}btn-danger{% else %}btn-outline-secondary{% %}">
+         class="btn btn-sm {% if not active_category %}btn-danger{% else %}btn-outline-secondary{% endif %}">
         All Services
       </a>
       {% for value, label in categories %}

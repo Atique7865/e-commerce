@@ -18,9 +18,10 @@
 3. [Project Structure](#project-structure)
 4. [Local Development](#local-development)
 5. [Docker Setup](#docker-setup)
-6. [Kubernetes Deployment](#kubernetes-deployment)
-7. [Environment Variables](#environment-variables)
-8. [Admin Panel](#admin-panel)
+6. [Dockerize Without Docker Compose](#dockerize-without-docker-compose)
+7. [Kubernetes Deployment](#kubernetes-deployment)
+8. [Environment Variables](#environment-variables)
+9. [Admin Panel](#admin-panel)
 
 ---
 
@@ -264,6 +265,113 @@ docker push your-registry/talentheart:latest
 
 ---
 
+## Dockerize Without Docker Compose
+
+Run every service manually using plain `docker` commands — no Compose required.
+
+### Prerequisites
+- Docker ≥ 24
+- A `.env` file configured from `.env.example`
+
+### Step 1 — Create a shared network
+
+```bash
+docker network create talentheart-net
+```
+
+### Step 2 — Start PostgreSQL
+
+```bash
+docker run -d \
+  --name talentheart-db \
+  --network talentheart-net \
+  -e POSTGRES_DB=talentheart_db \
+  -e POSTGRES_USER=talentheart \
+  -e POSTGRES_PASSWORD=your_db_password \
+  -v talentheart-pg-data:/var/lib/postgresql/data \
+  postgres:15-alpine
+```
+
+### Step 3 — Start Redis
+
+```bash
+docker run -d \
+  --name talentheart-redis \
+  --network talentheart-net \
+  redis:7-alpine \
+  redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+```
+
+### Step 4 — Build the application image
+
+```bash
+docker build -t talentheart-web:latest .
+```
+
+### Step 5 — Run the Django / Gunicorn container
+
+```bash
+docker run -d \
+  --name talentheart-web \
+  --network talentheart-net \
+  -e SECRET_KEY="your-secret-key" \
+  -e DEBUG="False" \
+  -e ALLOWED_HOSTS="localhost,127.0.0.1" \
+  -e DB_NAME="talentheart_db" \
+  -e DB_USER="talentheart" \
+  -e DB_PASSWORD="your_db_password" \
+  -e DB_HOST="talentheart-db" \
+  -e DB_PORT="5432" \
+  -e REDIS_URL="redis://talentheart-redis:6379/0" \
+  -v talentheart-static:/app/staticfiles \
+  -v talentheart-media:/app/media \
+  talentheart-web:latest
+```
+
+### Step 6 — Start Nginx
+
+```bash
+docker run -d \
+  --name talentheart-nginx \
+  --network talentheart-net \
+  -p 80:80 \
+  -v talentheart-static:/app/staticfiles:ro \
+  -v talentheart-media:/app/media:ro \
+  -v "$(pwd)/nginx/nginx.conf:/etc/nginx/nginx.conf:ro" \
+  -v "$(pwd)/nginx/conf.d:/etc/nginx/conf.d:ro" \
+  nginx:1.25-alpine
+```
+
+> **Windows PowerShell:** replace `$(pwd)` with `${PWD}`.
+
+### Step 7 — Verify everything is running
+
+```bash
+docker ps
+# All four containers (db, redis, web, nginx) should show "Up"
+
+# Check web logs
+docker logs -f talentheart-web
+
+# Create a superuser
+docker exec -it talentheart-web python manage.py createsuperuser
+```
+
+Open → http://localhost  
+Admin → http://localhost/admin/
+
+### Teardown
+
+```bash
+docker stop talentheart-nginx talentheart-web talentheart-redis talentheart-db
+docker rm   talentheart-nginx talentheart-web talentheart-redis talentheart-db
+docker network rm talentheart-net
+# Remove volumes only when you want to wipe all data
+docker volume rm talentheart-pg-data talentheart-static talentheart-media
+```
+
+---
+
 ## Kubernetes Deployment
 
 ### Prerequisites
@@ -274,15 +382,36 @@ docker push your-registry/talentheart:latest
 - [cert-manager](https://cert-manager.io/) (for automatic TLS)
 - An RWX-capable StorageClass (e.g., AWS EFS, GCP Filestore, NFS) for shared volumes
 
+### 0. Build and push the image to Docker Hub
+
+All Kubernetes manifests reference the image `atique123/talentheart`. Build, tag, and push it before deploying.
+
+```bash
+# Log in to Docker Hub
+docker login
+
+# Build the production image
+docker build -t atique123/talentheart:latest .
+
+# (Optional) tag a versioned release
+docker tag atique123/talentheart:latest atique123/talentheart:v1.0.0
+
+# Push both tags
+docker push atique123/talentheart:latest
+docker push atique123/talentheart:v1.0.0
+```
+
+> For CI/CD pipelines (GitHub Actions, GitLab CI, etc.), store your Docker Hub credentials as repository secrets (`DOCKERHUB_USERNAME` / `DOCKERHUB_TOKEN`) and run the same commands in the workflow.
+
 ### 1. Update the image name
 
-Edit `k8s/web/deployment.yaml` and replace:
+Edit `k8s/web/deployment.yaml` and replace the placeholder with your Docker Hub image:
 ```yaml
-image: your-registry/talentheart:latest
+image: atique123/talentheart:latest
 ```
-with your actual registry path, e.g.:
+Pin a specific version tag in production instead of `latest`:
 ```yaml
-image: ghcr.io/your-org/talentheart:v1.0.0
+image: atique123/talentheart:v1.0.0
 ```
 
 ### 2. Set real secrets

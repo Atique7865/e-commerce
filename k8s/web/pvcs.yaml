@@ -1,0 +1,35 @@
+# =============================================================================
+# k8s/web/pvcs.yaml
+# PersistentVolumeClaims for static files and media (shared with Nginx pods)
+# Use ReadWriteMany (RWX) so multiple web + nginx pods can mount simultaneously
+# — requires an NFS or CSI driver like AWS EFS / GCP Filestore
+# =============================================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: staticfiles-pvc
+  namespace: talentheart
+  labels:
+    app: talentheart-web
+spec:
+  accessModes:
+    - ReadWriteMany        # multiple pods can mount (NFS/EFS required)
+  storageClassName: efs-sc # replace with your RWX storage class name
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: media-pvc
+  namespace: talentheart
+  labels:
+    app: talentheart-web
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: efs-sc
+  resources:
+    requests:
+      storage: 20Gi

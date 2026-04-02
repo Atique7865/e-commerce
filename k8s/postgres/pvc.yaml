@@ -1,0 +1,18 @@
+# =============================================================================
+# k8s/postgres/pvc.yaml
+# PersistentVolumeClaim for PostgreSQL data
+# =============================================================================
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: postgres-pvc
+  namespace: talentheart
+  labels:
+    app: postgres
+spec:
+  accessModes:
+    - ReadWriteOnce            # single-node write (appropriate for single-primary PG)
+  storageClassName: standard   # change to gp2/gp3 on AWS, premium-rwo on GKE
+  resources:
+    requests:
+      storage: 10Gi

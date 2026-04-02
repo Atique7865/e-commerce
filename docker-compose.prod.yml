@@ -1,0 +1,69 @@
+# =============================================================================
+# docker-compose.prod.yml — Production overrides
+# Usage: docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+#
+# Differences from dev:
+#  - No source-code bind mount (immutable image)
+#  - DEBUG=False
+#  - SMTP email backend
+#  - No exposed DB/Redis ports
+#  - Resource limits on all services
+# =============================================================================
+
+version: "3.9"
+
+services:
+
+  db:
+    ports: []                         # never expose DB to host in production
+    deploy:
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+
+  redis:
+    ports: []                         # never expose Redis to host in production
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+  web:
+    environment:
+      DEBUG: "False"
+      SECRET_KEY: ${SECRET_KEY}       # must be set in environment / CI
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      EMAIL_BACKEND: django.core.mail.backends.smtp.EmailBackend
+      EMAIL_HOST:          ${EMAIL_HOST}
+      EMAIL_PORT:          ${EMAIL_PORT:-587}
+      EMAIL_USE_TLS:       ${EMAIL_USE_TLS:-True}
+      EMAIL_HOST_USER:     ${EMAIL_HOST_USER}
+      EMAIL_HOST_PASSWORD: ${EMAIL_HOST_PASSWORD}
+      DEFAULT_FROM_EMAIL:  ${DEFAULT_FROM_EMAIL}
+      CONTACT_EMAIL:       ${CONTACT_EMAIL}
+    volumes:
+      # Remove the live-reload bind mount — use image code only
+      - staticfiles:/app/staticfiles
+      - media_files:/app/media
+    deploy:
+      replicas: 2                     # two gunicorn containers behind nginx
+      resources:
+        limits:
+          cpus: "1"
+          memory: 512M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+  nginx:
+    ports:
+      - "80:80"
+      - "443:443"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 128M

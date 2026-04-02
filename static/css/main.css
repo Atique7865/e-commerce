@@ -1,0 +1,223 @@
+/* =========================================================
+   TalentHeart Limited — Main Stylesheet
+   Built on top of Bootstrap 5
+   ========================================================= */
+
+/* ---- Variables ---- */
+:root {
+  --th-red:        #dc3545;
+  --th-red-light:  rgba(220, 53, 69, 0.1);
+  --th-dark:       #1a1a2e;
+  --th-gray:       #6c757d;
+  --transition:    0.25s ease;
+  --radius:        0.75rem;
+  --shadow:        0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* ---- Base ---- */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  color: #212529;
+  background: #fff;
+  line-height: 1.7;
+}
+
+/* ---- Utility spacing ---- */
+.py-6  { padding-top: 5rem !important; padding-bottom: 5rem !important; }
+.py-7  { padding-top: 7rem !important; padding-bottom: 7rem !important; }
+.min-vh-75 { min-height: 75vh; }
+
+/* ---- Text gradient ---- */
+.text-gradient {
+  background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ---- Icon box ---- */
+.icon-box {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ---- Cards ---- */
+.card { border-radius: var(--radius); }
+
+.hover-lift {
+  transition: transform var(--transition), box-shadow var(--transition);
+}
+.hover-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12) !important;
+}
+
+/* ---- Step numbers ---- */
+.step-number {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--th-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-number-sm {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: var(--th-red);
+  color: #fff;
+  font-weight: 700;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* ---- Page header section ---- */
+.page-header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border-bottom: 3px solid var(--th-red);
+}
+
+/* ---- Hero Section ---- */
+.hero-section {
+  min-height: 88vh;
+  background: linear-gradient(150deg, #fff 60%, #fff5f5 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: -20%;
+  right: -10%;
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(220,53,69,0.06) 0%, transparent 70%);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.hero-illustration {
+  position: relative;
+  display: inline-block;
+  font-size: 12rem;
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-15px); }
+}
+
+.floating-card {
+  border-radius: var(--radius) !important;
+  animation: float 5s ease-in-out infinite;
+}
+
+/* ---- CTA Section ---- */
+.cta-section {
+  background: linear-gradient(135deg, #fff5f5 0%, #ffeaea 100%);
+}
+
+/* ---- Navbar ---- */
+.navbar-dark .nav-link {
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 0.5rem 0.9rem;
+  transition: color var(--transition);
+}
+.navbar-dark .nav-link:hover { color: #ff6b6b !important; }
+
+/* ---- Alerts ---- */
+.alert-success { background: #d1e7dd; border-color: #badbcc; color: #0a3622; }
+.alert-error,
+.alert-danger   { background: #f8d7da; border-color: #f5c2c7; color: #842029; }
+.alert-info     { background: #cff4fc; border-color: #b6effb; color: #055160; }
+.alert-warning  { background: #fff3cd; border-color: #ffecb5; color: #664d03; }
+
+/* Django message tags → Bootstrap */
+.alert-debug   { background: #e2e3e5; border-color: #d3d6d8; color: #41464b; }
+
+/* ---- Timeline ---- */
+.timeline-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-size: 0.9rem;
+}
+
+/* ---- Forms ---- */
+.form-control, .form-select {
+  border-radius: 8px;
+  border: 1.5px solid #dee2e6;
+  transition: border-color var(--transition), box-shadow var(--transition);
+}
+.form-control:focus, .form-select:focus {
+  border-color: var(--th-red);
+  box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.12);
+}
+
+/* ---- Buttons ---- */
+.btn {
+  font-weight: 500;
+  border-radius: 8px;
+}
+.btn-danger {
+  background: var(--th-red);
+  border-color: var(--th-red);
+}
+.btn-danger:hover {
+  background: #bb2d3b;
+  border-color: #b02a37;
+}
+.btn-outline-danger:hover {
+  background: var(--th-red);
+}
+
+/* ---- Tables ---- */
+.table-hover tbody tr:hover {
+  background-color: rgba(220, 53, 69, 0.03);
+}
+
+/* ---- Breadcrumb ---- */
+.breadcrumb-item + .breadcrumb-item::before {
+  color: #6c757d;
+}
+
+/* ---- Responsive helpers ---- */
+@media (max-width: 768px) {
+  .hero-section { min-height: auto; padding: 4rem 0; }
+  .hero-illustration { font-size: 6rem; }
+  .floating-card { display: none; }
+  .display-4 { font-size: 2rem; }
+}
+
+/* ---- Scrollbar (optional) ---- */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #f1f1f1; }
+::-webkit-scrollbar-thumb { background: #c0c0c0; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--th-red); }
+
+/* ---- Footer links ---- */
+footer a:hover { color: #fff !important; }

@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}About Us — TalentHeart Limited{% endblock %}
+
+{% block content %}
+
+<!-- Page Header -->
+<section class="page-header bg-dark text-white py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col">
+        <nav aria-label="breadcrumb">
+          <ol class="breadcrumb mb-2">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-muted">Home</a></li>
+            <li class="breadcrumb-item active text-white">About</li>
+          </ol>
+        </nav>
+        <h1 class="fw-bold mb-2">About TalentHeart</h1>
+        <p class="text-muted lead mb-0">Driven by purpose. Defined by results.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Mission -->
+<section class="py-6">
+  <div class="container">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6">
+        <span class="badge bg-danger-subtle text-danger px-3 py-2 mb-3">Our Mission</span>
+        <h2 class="display-6 fw-bold mb-4">We Help Businesses Punch Above Their Weight</h2>
+        <p class="text-muted lead mb-3">
+          Founded in 2017, TalentHeart Limited was born from a simple belief:
+          every business deserves access to enterprise-grade digital expertise —
+          regardless of size.
+        </p>
+        <p class="text-muted">
+          Today we are a team of 50+ strategists, designers, engineers, and
+          cloud architects united by a shared obsession with measurable outcomes.
+          We embed ourselves in your business, think like your team, and deliver
+          solutions that actually move the needle.
+        </p>
+      </div>
+      <div class="col-lg-6">
+        <div class="row g-3">
+          <div class="col-6">
+            <div class="card border-0 bg-danger-subtle p-4 text-center rounded-3">
+              <div class="fw-bold display-6 text-danger">200+</div>
+              <div class="text-muted small">Projects Delivered</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card border-0 bg-primary-subtle p-4 text-center rounded-3">
+              <div class="fw-bold display-6 text-primary">50+</div>
+              <div class="text-muted small">Team Members</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card border-0 bg-success-subtle p-4 text-center rounded-3">
+              <div class="fw-bold display-6 text-success">98%</div>
+              <div class="text-muted small">Client Retention</div>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="card border-0 bg-warning-subtle p-4 text-center rounded-3">
+              <div class="fw-bold display-6 text-warning">7+</div>
+              <div class="text-muted small">Years Experience</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Values -->
+<section class="py-6 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="display-6 fw-bold">Our Core Values</h2>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-3 text-center">
+        <div class="icon-box bg-danger-subtle text-danger mx-auto mb-3">
+          <i class="bi bi-shield-check fs-3"></i>
+        </div>
+        <h6 class="fw-bold">Integrity</h6>
+        <p class="text-muted small">We are honest about what we can deliver and we always do what we say.</p>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="icon-box bg-primary-subtle text-primary mx-auto mb-3">
+          <i class="bi bi-rocket fs-3"></i>
+        </div>
+        <h6 class="fw-bold">Innovation</h6>
+        <p class="text-muted small">We stay ahead of industry trends so your business always has an edge.</p>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="icon-box bg-success-subtle text-success mx-auto mb-3">
+          <i class="bi bi-people fs-3"></i>
+        </div>
+        <h6 class="fw-bold">Collaboration</h6>
+        <p class="text-muted small">We treat every client engagement as a genuine partnership.</p>
+      </div>
+      <div class="col-md-3 text-center">
+        <div class="icon-box bg-warning-subtle text-warning mx-auto mb-3">
+          <i class="bi bi-bar-chart fs-3"></i>
+        </div>
+        <h6 class="fw-bold">Results</h6>
+        <p class="text-muted small">We measure success by your growth, not just by deliverables.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="py-5 text-center">
+  <div class="container">
+    <h3 class="fw-bold mb-3">Ready to work with us?</h3>
+    <a href="{% url 'contact:contact' %}" class="btn btn-danger btn-lg px-5 me-3">Get in Touch</a>
+    <a href="{% url 'services:list' %}" class="btn btn-outline-secondary btn-lg px-5">Our Services</a>
+  </div>
+</section>
+
+{% endblock %}

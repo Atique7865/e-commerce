@@ -1,0 +1,90 @@
+# =============================================================================
+# k8s/postgres/statefulset.yaml
+# PostgreSQL 15 — StatefulSet ensures stable network identity and ordered
+# pod management, which is important for databases.
+# =============================================================================
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres
+  namespace: talentheart
+  labels:
+    app: postgres
+    tier: database
+spec:
+  serviceName: postgres-service
+  replicas: 1                   # single primary; use patroni/pgpool for HA
+  selector:
+    matchLabels:
+      app: postgres
+  template:
+    metadata:
+      labels:
+        app: postgres
+        tier: database
+    spec:
+      terminationGracePeriodSeconds: 60
+
+      containers:
+        - name: postgres
+          image: postgres:15-alpine
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 5432
+              name: postgres
+
+          env:
+            - name: POSTGRES_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: talentheart-config
+                  key: DB_NAME
+            - name: POSTGRES_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: talentheart-config
+                  key: DB_USER
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: talentheart-secrets
+                  key: POSTGRES_PASSWORD
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
+
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "1Gi"
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pg_isready -U $(POSTGRES_USER) -d $(POSTGRES_DB)"
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 6
+
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pg_isready -U $(POSTGRES_USER) -d $(POSTGRES_DB)"
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-pvc

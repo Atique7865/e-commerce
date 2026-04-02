@@ -1,0 +1,88 @@
+# =============================================================================
+# k8s/nginx/deployment.yaml
+# Nginx reverse proxy — serves static/media directly, proxies app to web pods
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx
+  namespace: talentheart
+  labels:
+    app: nginx
+    tier: proxy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: nginx
+        tier: proxy
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.25-alpine
+          imagePullPolicy: IfNotPresent
+
+          ports:
+            - containerPort: 80
+              name: http
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 80
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          volumeMounts:
+            # Nginx config from ConfigMap
+            - name: nginx-conf
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
+            - name: nginx-conf
+              mountPath: /etc/nginx/conf.d/talentheart.conf
+              subPath: talentheart.conf
+              readOnly: true
+            # Shared volumes with web pods
+            - name: static-files
+              mountPath: /app/staticfiles
+              readOnly: true
+            - name: media-files
+              mountPath: /app/media
+              readOnly: true
+
+      volumes:
+        - name: nginx-conf
+          configMap:
+            name: nginx-config
+        - name: static-files
+          persistentVolumeClaim:
+            claimName: staticfiles-pvc
+        - name: media-files
+          persistentVolumeClaim:
+            claimName: media-pvc

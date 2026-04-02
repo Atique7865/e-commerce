@@ -1,0 +1,148 @@
+# =============================================================================
+# k8s/web/deployment.yaml
+# Django + Gunicorn application pods
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: talentheart-web
+  namespace: talentheart
+  labels:
+    app: talentheart-web
+    tier: application
+spec:
+  replicas: 2                           # start with 2; HPA manages scale-out
+  selector:
+    matchLabels:
+      app: talentheart-web
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  template:
+    metadata:
+      labels:
+        app: talentheart-web
+        tier: application
+    spec:
+      # Wait for Django to finish starting before killing old pods
+      terminationGracePeriodSeconds: 30
+
+      initContainers:
+        # Wait for PostgreSQL to be ready before starting the app
+        - name: wait-for-postgres
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z postgres-service 5432; do
+                echo "Waiting for PostgreSQL..."; sleep 2;
+              done
+              echo "PostgreSQL is ready."
+
+        # Wait for Redis to be ready
+        - name: wait-for-redis
+          image: busybox:1.35
+          command:
+            - sh
+            - -c
+            - |
+              until nc -z redis-service 6379; do
+                echo "Waiting for Redis..."; sleep 2;
+              done
+              echo "Redis is ready."
+
+        # Run migrations (only runs once due to Django's migration idempotency)
+        - name: run-migrations
+          image: your-registry/talentheart:latest   # replace with your image
+          command: ["python", "manage.py", "migrate", "--noinput"]
+          envFrom:
+            - configMapRef:
+                name: talentheart-config
+            - secretRef:
+                name: talentheart-secrets
+
+      containers:
+        - name: web
+          image: your-registry/talentheart:latest   # replace with your image
+          imagePullPolicy: Always
+
+          command:
+            - gunicorn
+            - talentheart.wsgi:application
+            - --bind=0.0.0.0:8000
+            - --workers=4
+            - --worker-class=sync
+            - --worker-tmp-dir=/dev/shm
+            - --timeout=120
+            - --keep-alive=5
+            - --max-requests=1000
+            - --max-requests-jitter=100
+            - --log-level=info
+            - --access-logfile=-
+            - --error-logfile=-
+
+          ports:
+            - containerPort: 8000
+              name: gunicorn
+
+          envFrom:
+            - configMapRef:
+                name: talentheart-config
+            - secretRef:
+                name: talentheart-secrets
+
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "768Mi"
+
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8000
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 30
+            periodSeconds: 15
+            failureThreshold: 4
+            timeoutSeconds: 5
+
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8000
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 5
+
+          volumeMounts:
+            - name: static-files
+              mountPath: /app/staticfiles
+            - name: media-files
+              mountPath: /app/media
+            # Gunicorn uses /dev/shm for worker heartbeat temp files
+            - name: shm
+              mountPath: /dev/shm
+
+      volumes:
+        - name: static-files
+          persistentVolumeClaim:
+            claimName: staticfiles-pvc
+        - name: media-files
+          persistentVolumeClaim:
+            claimName: media-pvc
+        - name: shm
+          emptyDir:
+            medium: Memory
+            sizeLimit: 64Mi

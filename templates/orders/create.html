@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Book a Service — TalentHeart{% endblock %}
+
+{% block content %}
+
+<section class="page-header bg-dark text-white py-5">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-2">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-muted">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'orders:list' %}" class="text-muted">My Orders</a></li>
+        <li class="breadcrumb-item active text-white">New Order</li>
+      </ol>
+    </nav>
+    <h1 class="fw-bold mb-0">Book a Service</h1>
+    {% if service %}
+    <p class="text-muted mt-1 mb-0">
+      Booking: <strong class="text-white">{{ service.name }}</strong>
+    </p>
+    {% endif %}
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col-lg-7">
+
+        <div class="card border-0 shadow-sm">
+          <div class="card-body p-4 p-md-5">
+            <h5 class="fw-bold mb-1">Tell Us About Your Project</h5>
+            <p class="text-muted small mb-4">
+              The more detail you provide, the better we can scope your project
+              and get you started faster.
+            </p>
+
+            <form method="post" novalidate>
+              {% csrf_token %}
+              {{ form|crispy }}
+              <div class="d-flex gap-2 mt-4">
+                <button type="submit" class="btn btn-danger px-4">
+                  <i class="bi bi-send me-2"></i>Submit Order
+                </button>
+                <a href="{% url 'services:list' %}" class="btn btn-outline-secondary px-4">Cancel</a>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Assurance panel -->
+        <div class="card border-0 bg-light mt-4">
+          <div class="card-body p-4">
+            <h6 class="fw-bold mb-3">What Happens Next?</h6>
+            <div class="d-flex gap-3 mb-2">
+              <div class="step-number-sm flex-shrink-0">1</div>
+              <p class="text-muted small mb-0">We review your submission within 24 hours.</p>
+            </div>
+            <div class="d-flex gap-3 mb-2">
+              <div class="step-number-sm flex-shrink-0">2</div>
+              <p class="text-muted small mb-0">A dedicated manager reaches out to schedule a call.</p>
+            </div>
+            <div class="d-flex gap-3">
+              <div class="step-number-sm flex-shrink-0">3</div>
+              <p class="text-muted small mb-0">We send a detailed proposal and kick off your project.</p>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

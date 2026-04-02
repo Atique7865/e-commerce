@@ -1,0 +1,11 @@
+# =============================================================================
+# k8s/namespace.yaml
+# Isolates all TalentHeart resources in their own namespace
+# =============================================================================
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: talentheart
+  labels:
+    app.kubernetes.io/name: talentheart
+    environment: production

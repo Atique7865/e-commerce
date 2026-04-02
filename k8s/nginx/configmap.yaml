@@ -1,0 +1,85 @@
+# =============================================================================
+# k8s/nginx/configmap.yaml
+# Nginx configuration stored as a ConfigMap so it can be updated without
+# rebuilding an image. The Nginx Deployment mounts these as files.
+# =============================================================================
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+  namespace: talentheart
+data:
+  nginx.conf: |
+    user  nginx;
+    worker_processes  auto;
+    error_log  /var/log/nginx/error.log warn;
+    pid        /var/run/nginx.pid;
+    events {
+        worker_connections 1024;
+        use epoll;
+        multi_accept on;
+    }
+    http {
+        include       /etc/nginx/mime.types;
+        default_type  application/octet-stream;
+        log_format main '$remote_addr - $remote_user [$time_local] "$request" '
+                        '$status $body_bytes_sent "$http_referer" '
+                        '"$http_user_agent"';
+        access_log /var/log/nginx/access.log main;
+        sendfile on;
+        tcp_nopush on;
+        keepalive_timeout 65;
+        client_max_body_size 20M;
+        gzip on;
+        gzip_vary on;
+        gzip_proxied any;
+        gzip_comp_level 6;
+        gzip_types text/plain text/css text/xml application/json
+                   application/javascript application/xml image/svg+xml;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-Frame-Options "DENY" always;
+        limit_req_zone $binary_remote_addr zone=login:10m rate=5r/m;
+        include /etc/nginx/conf.d/*.conf;
+    }
+
+  talentheart.conf: |
+    upstream talentheart_app {
+        server talentheart-web-service:8000;
+        keepalive 32;
+    }
+    server {
+        listen 80;
+        server_name _;
+        charset utf-8;
+        location /static/ {
+            alias /app/staticfiles/;
+            expires 1y;
+            add_header Cache-Control "public, immutable";
+            access_log off;
+        }
+        location /media/ {
+            alias /app/media/;
+            expires 30d;
+            add_header Cache-Control "public";
+            access_log off;
+        }
+        location = /favicon.ico { access_log off; log_not_found off; }
+        location = /robots.txt  { return 200 "User-agent: *\nDisallow:\n"; }
+        location /accounts/login/ {
+            limit_req zone=login burst=10 nodelay;
+            proxy_pass http://talentheart_app;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+        }
+        location / {
+            proxy_pass http://talentheart_app;
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_read_timeout 60s;
+        }
+        location ~ /\. { deny all; }
+    }

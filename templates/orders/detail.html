@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}Order #{{ order.pk }} — TalentHeart{% endblock %}
+
+{% block content %}
+
+<section class="page-header bg-dark text-white py-5">
+  <div class="container">
+    <nav aria-label="breadcrumb">
+      <ol class="breadcrumb mb-2">
+        <li class="breadcrumb-item"><a href="{% url 'home' %}" class="text-muted">Home</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'orders:list' %}" class="text-muted">My Orders</a></li>
+        <li class="breadcrumb-item active text-white">Order #{{ order.pk }}</li>
+      </ol>
+    </nav>
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <h1 class="fw-bold mb-1">{{ order.project_name }}</h1>
+        <span class="badge {{ order.status_badge_class }} fs-6">{{ order.get_status_display }}</span>
+      </div>
+      {% if order.status in 'pending,in_progress' %}
+      <a href="{% url 'orders:cancel' order.pk %}" class="btn btn-outline-danger btn-sm">
+        <i class="bi bi-x-circle me-1"></i>Cancel Order
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<section class="py-5">
+  <div class="container">
+    <div class="row gy-4">
+
+      <!-- Details -->
+      <div class="col-lg-8">
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+            <h5 class="fw-bold">Project Description</h5>
+          </div>
+          <div class="card-body px-4 pb-4">
+            <p class="text-muted" style="white-space:pre-line;">{{ order.project_description }}</p>
+          </div>
+        </div>
+
+        <!-- Timeline / Status history (static) -->
+        <div class="card border-0 shadow-sm">
+          <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+            <h5 class="fw-bold">Order Timeline</h5>
+          </div>
+          <div class="card-body px-4 pb-4">
+            <div class="timeline">
+              <div class="d-flex gap-3 mb-3">
+                <div class="timeline-icon bg-success text-white"><i class="bi bi-check-lg"></i></div>
+                <div>
+                  <div class="fw-semibold small">Order Submitted</div>
+                  <div class="text-muted small">{{ order.created_at|date:"M d, Y · H:i" }}</div>
+                </div>
+              </div>
+              <div class="d-flex gap-3 mb-3">
+                <div class="timeline-icon {% if order.status != 'pending' %}bg-success text-white{% else %}bg-light text-muted border{% %}">
+                  <i class="bi bi-hourglass-split"></i>
+                </div>
+                <div>
+                  <div class="fw-semibold small {% if order.status == 'pending' %}text-muted{% endif %}">
+                    In Progress
+                  </div>
+                  {% if order.status != 'pending' %}
+                  <div class="text-muted small">{{ order.updated_at|date:"M d, Y · H:i" }}</div>
+                  {% endif %}
+                </div>
+              </div>
+              <div class="d-flex gap-3">
+                <div class="timeline-icon {% if order.status == 'completed' %}bg-success text-white{% else %}bg-light text-muted border{% %}">
+                  <i class="bi bi-trophy"></i>
+                </div>
+                <div>
+                  <div class="fw-semibold small {% if order.status != 'completed' %}text-muted{% endif %}">
+                    Completed
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-body p-4">
+            <h6 class="fw-bold mb-3">Order Summary</h6>
+            <dl class="row small mb-0">
+              <dt class="col-5 text-muted">Order ID</dt>
+              <dd class="col-7">#{{ order.pk }}</dd>
+
+              <dt class="col-5 text-muted">Service</dt>
+              <dd class="col-7">
+                <a href="{{ order.service.get_absolute_url }}" class="text-danger text-decoration-none">
+                  {{ order.service.name }}
+                </a>
+              </dd>
+
+              <dt class="col-5 text-muted">Budget</dt>
+              <dd class="col-7">{{ order.get_budget_range_display }}</dd>
+
+              {% if order.deadline %}
+              <dt class="col-5 text-muted">Deadline</dt>
+              <dd class="col-7">{{ order.deadline|date:"M d, Y" }}</dd>
+              {% endif %}
+
+              <dt class="col-5 text-muted">Submitted</dt>
+              <dd class="col-7">{{ order.created_at|date:"M d, Y" }}</dd>
+
+              <dt class="col-5 text-muted">Last Update</dt>
+              <dd class="col-7">{{ order.updated_at|date:"M d, Y" }}</dd>
+            </dl>
+          </div>
+        </div>
+
+        <div class="card border-0 bg-danger-subtle">
+          <div class="card-body p-4">
+            <h6 class="fw-bold mb-2">Need Help?</h6>
+            <p class="small text-muted mb-3">Our team is available Mon–Fri, 9am–6pm EST.</p>
+            <a href="{% url 'contact:contact' %}" class="btn btn-danger btn-sm w-100">
+              <i class="bi bi-headset me-2"></i>Contact Support
+            </a>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

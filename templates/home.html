@@ -1,0 +1,312 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}TalentHeart Limited — Digital Agency{% endblock %}
+
+{% block content %}
+
+<!-- ================================================================
+     HERO SECTION
+================================================================ -->
+<section class="hero-section d-flex align-items-center">
+  <div class="container py-5">
+    <div class="row align-items-center gy-5">
+      <div class="col-lg-6">
+        <span class="badge bg-danger-subtle text-danger fw-semibold mb-3 px-3 py-2">
+          <i class="bi bi-lightning-fill me-1"></i>Digital Agency
+        </span>
+        <h1 class="display-4 fw-bold lh-sm mb-4">
+          We Build Digital<br>
+          <span class="text-gradient">Experiences That <br>Matter</span>
+        </h1>
+        <p class="lead text-muted mb-4">
+          TalentHeart partners with ambitious brands to deliver world-class
+          digital marketing, web development, and DevOps solutions.
+        </p>
+        <div class="d-flex flex-wrap gap-3">
+          <a href="{% url 'services:list' %}" class="btn btn-danger btn-lg px-4">
+            Explore Services <i class="bi bi-arrow-right ms-2"></i>
+          </a>
+          <a href="{% url 'contact:contact' %}" class="btn btn-outline-secondary btn-lg px-4">
+            Talk to Us
+          </a>
+        </div>
+        <!-- Trust badges -->
+        <div class="d-flex align-items-center gap-4 mt-5">
+          <div class="text-center">
+            <div class="fw-bold fs-4 text-dark">200+</div>
+            <div class="text-muted small">Projects Delivered</div>
+          </div>
+          <div class="vr"></div>
+          <div class="text-center">
+            <div class="fw-bold fs-4 text-dark">98%</div>
+            <div class="text-muted small">Client Satisfaction</div>
+          </div>
+          <div class="vr"></div>
+          <div class="text-center">
+            <div class="fw-bold fs-4 text-dark">7+</div>
+            <div class="text-muted small">Years Experience</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-6 text-center">
+        <div class="hero-illustration">
+          <i class="bi bi-laptop display-1 text-danger opacity-75"></i>
+          <div class="floating-card card shadow-lg border-0 p-3 text-start" style="max-width:220px;position:absolute;top:10%;right:5%;">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <i class="bi bi-graph-up-arrow text-success fs-5"></i>
+              <span class="fw-semibold small">SEO Traffic</span>
+            </div>
+            <div class="text-success fw-bold">+143%</div>
+            <small class="text-muted">Last 30 days</small>
+          </div>
+          <div class="floating-card card shadow-lg border-0 p-3 text-start" style="max-width:200px;position:absolute;bottom:15%;left:5%;">
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <i class="bi bi-check-circle-fill text-success fs-5"></i>
+              <span class="fw-semibold small">Project Live</span>
+            </div>
+            <small class="text-muted">e-commerce platform deployed in 4 weeks</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     SERVICES OVERVIEW
+================================================================ -->
+<section class="py-6 bg-light">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="badge bg-danger-subtle text-danger px-3 py-2 mb-3">What We Do</span>
+      <h2 class="display-6 fw-bold">Our Core Services</h2>
+      <p class="text-muted lead col-lg-6 mx-auto">
+        Everything your business needs to thrive in the digital landscape.
+      </p>
+    </div>
+
+    <div class="row g-4">
+      <!-- Digital Marketing -->
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 shadow-sm hover-lift">
+          <div class="card-body p-4">
+            <div class="icon-box bg-danger-subtle text-danger mb-4">
+              <i class="bi bi-graph-up-arrow fs-3"></i>
+            </div>
+            <h4 class="fw-bold">Digital Marketing</h4>
+            <p class="text-muted">
+              Data-driven SEO, PPC, social media, and email campaigns that
+              consistently grow your revenue and brand awareness.
+            </p>
+            <ul class="list-unstyled text-muted small mb-4">
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>SEO &amp; Content Marketing</li>
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>Google &amp; Meta Ads</li>
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>Email Automation</li>
+            </ul>
+            <a href="{% url 'services:list' %}?category=digital_marketing" class="btn btn-outline-danger btn-sm">
+              Learn More <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Web Development -->
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 shadow-sm hover-lift" style="border-top:3px solid var(--bs-danger)!important;">
+          <div class="card-body p-4">
+            <div class="icon-box bg-primary-subtle text-primary mb-4">
+              <i class="bi bi-code-slash fs-3"></i>
+            </div>
+            <h4 class="fw-bold">Web Development</h4>
+            <p class="text-muted">
+              From sleek corporate sites to complex SaaS platforms — we build
+              fast, scalable, and beautifully designed web applications.
+            </p>
+            <ul class="list-unstyled text-muted small mb-4">
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>Custom UI/UX Design</li>
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>Django / React / Next.js</li>
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>API &amp; Integrations</li>
+            </ul>
+            <a href="{% url 'services:list' %}?category=web_development" class="btn btn-outline-primary btn-sm">
+              Learn More <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- DevOps -->
+      <div class="col-lg-4">
+        <div class="card h-100 border-0 shadow-sm hover-lift">
+          <div class="card-body p-4">
+            <div class="icon-box bg-success-subtle text-success mb-4">
+              <i class="bi bi-cloud-check fs-3"></i>
+            </div>
+            <h4 class="fw-bold">DevOps &amp; Cloud</h4>
+            <p class="text-muted">
+              CI/CD pipelines, Docker, Kubernetes, and cloud infrastructure
+              so you can ship features with confidence and zero downtime.
+            </p>
+            <ul class="list-unstyled text-muted small mb-4">
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>CI/CD &amp; Automation</li>
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>AWS / GCP / Azure</li>
+              <li class="mb-1"><i class="bi bi-check2 text-success me-2"></i>Monitoring &amp; Alerting</li>
+            </ul>
+            <a href="{% url 'services:list' %}?category=devops" class="btn btn-outline-success btn-sm">
+              Learn More <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="text-center mt-4">
+      <a href="{% url 'services:list' %}" class="btn btn-danger px-5">
+        View All Services
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     HOW IT WORKS
+================================================================ -->
+<section class="py-6">
+  <div class="container">
+    <div class="text-center mb-5">
+      <span class="badge bg-danger-subtle text-danger px-3 py-2 mb-3">How It Works</span>
+      <h2 class="display-6 fw-bold">From Idea to Launch in 4 Steps</h2>
+    </div>
+    <div class="row g-4 text-center">
+      {% for step in steps_data %}
+      {% endfor %}
+      <div class="col-md-3">
+        <div class="step-number mx-auto mb-3">1</div>
+        <h6 class="fw-bold">Consultation</h6>
+        <p class="text-muted small">We discuss your goals, timeline, and budget in a free discovery call.</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-number mx-auto mb-3">2</div>
+        <h6 class="fw-bold">Strategy &amp; Proposal</h6>
+        <p class="text-muted small">We craft a tailored strategy and present a clear scope and cost.</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-number mx-auto mb-3">3</div>
+        <h6 class="fw-bold">Execution</h6>
+        <p class="text-muted small">Our team gets to work with weekly progress updates and demos.</p>
+      </div>
+      <div class="col-md-3">
+        <div class="step-number mx-auto mb-3">4</div>
+        <h6 class="fw-bold">Launch &amp; Support</h6>
+        <p class="text-muted small">We go live and provide ongoing support to ensure your success.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     TESTIMONIALS
+================================================================ -->
+<section class="py-6 bg-dark text-white">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="display-6 fw-bold">Trusted by Leading Brands</h2>
+      <p class="text-muted">What our clients say about working with TalentHeart.</p>
+    </div>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card bg-dark border border-secondary p-4 h-100">
+          <div class="d-flex gap-1 text-warning mb-3">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+          </div>
+          <p class="text-muted fst-italic mb-4">
+            "TalentHeart tripled our organic traffic in 6 months. Their SEO team is
+            genuinely exceptional — transparent reporting and real results."
+          </p>
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-danger d-flex align-items-center justify-content-center" style="width:42px;height:42px;">
+              <span class="fw-bold text-white">SM</span>
+            </div>
+            <div>
+              <div class="fw-semibold small">Sarah Mitchell</div>
+              <div class="text-muted small">CMO, NovaTech</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card bg-dark border border-secondary p-4 h-100">
+          <div class="d-flex gap-1 text-warning mb-3">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+          </div>
+          <p class="text-muted fst-italic mb-4">
+            "The new platform they built handles 10× the traffic without breaking a sweat.
+            Clean code, on time, on budget — what more could you ask for?"
+          </p>
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-primary d-flex align-items-center justify-content-center" style="width:42px;height:42px;">
+              <span class="fw-bold text-white">JL</span>
+            </div>
+            <div>
+              <div class="fw-semibold small">James Liu</div>
+              <div class="text-muted small">CTO, Buildify</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="card bg-dark border border-secondary p-4 h-100">
+          <div class="d-flex gap-1 text-warning mb-3">
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i>
+            <i class="bi bi-star-fill"></i><i class="bi bi-star-half"></i>
+          </div>
+          <p class="text-muted fst-italic mb-4">
+            "Our deployment time went from 2 hours to 8 minutes after TalentHeart
+            set up our CI/CD pipeline. Game-changer for our engineering team."
+          </p>
+          <div class="d-flex align-items-center gap-3">
+            <div class="rounded-circle bg-success d-flex align-items-center justify-content-center" style="width:42px;height:42px;">
+              <span class="fw-bold text-white">AK</span>
+            </div>
+            <div>
+              <div class="fw-semibold small">Amara Kofi</div>
+              <div class="text-muted small">VP Engineering, Stackly</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================================
+     CALL TO ACTION
+================================================================ -->
+<section class="py-6 cta-section">
+  <div class="container text-center">
+    <h2 class="display-6 fw-bold mb-3">Ready to Grow Your Business?</h2>
+    <p class="lead text-muted col-lg-5 mx-auto mb-4">
+      Join 200+ companies already thriving with TalentHeart.
+      Get a free consultation today — no obligation.
+    </p>
+    <div class="d-flex justify-content-center gap-3 flex-wrap">
+      {% if user.is_authenticated %}
+        <a href="{% url 'orders:create' %}" class="btn btn-danger btn-lg px-5">
+          <i class="bi bi-plus-circle me-2"></i>Book a Service
+        </a>
+      {% else %}
+        <a href="{% url 'accounts:signup' %}" class="btn btn-danger btn-lg px-5">
+          <i class="bi bi-person-plus me-2"></i>Get Started Free
+        </a>
+        <a href="{% url 'contact:contact' %}" class="btn btn-outline-secondary btn-lg px-5">
+          Contact Sales
+        </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{% endblock %}

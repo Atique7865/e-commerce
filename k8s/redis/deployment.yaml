@@ -1,0 +1,67 @@
+# =============================================================================
+# k8s/redis/deployment.yaml
+# Redis 7 — single replica (use Redis Sentinel or Cluster for HA)
+# =============================================================================
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis
+  namespace: talentheart
+  labels:
+    app: redis
+    tier: cache
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: redis
+  template:
+    metadata:
+      labels:
+        app: redis
+        tier: cache
+    spec:
+      containers:
+        - name: redis
+          image: redis:7-alpine
+          imagePullPolicy: IfNotPresent
+
+          command:
+            - redis-server
+            - --appendonly yes
+            - --appendfsync everysec
+            - --maxmemory 256mb
+            - --maxmemory-policy allkeys-lru
+
+          ports:
+            - containerPort: 6379
+              name: redis
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "384Mi"
+
+          livenessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            failureThreshold: 6
+
+          readinessProbe:
+            exec:
+              command: ["redis-cli", "ping"]
+            initialDelaySeconds: 5
+            periodSeconds: 5
+
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+
+      volumes:
+        - name: redis-data
+          emptyDir: {}          # for HA swap with a PVC; cache is re-warmable

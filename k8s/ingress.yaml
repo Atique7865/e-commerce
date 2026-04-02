@@ -1,0 +1,59 @@
+# =============================================================================
+# k8s/ingress.yaml
+# Kubernetes Ingress — alternative to LoadBalancer Service for HTTP/HTTPS
+# Requires nginx-ingress-controller:
+#   kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
+#
+# For TLS, install cert-manager:
+#   kubectl apply -f https://github.com/cert-manager/cert-manager/releases/latest/download/cert-manager.yaml
+# =============================================================================
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: talentheart-ingress
+  namespace: talentheart
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    # Redirect HTTP → HTTPS
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+    # File upload limit
+    nginx.ingress.kubernetes.io/proxy-body-size: "20m"
+    # Timeouts
+    nginx.ingress.kubernetes.io/proxy-connect-timeout: "10"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
+    # Rate limiting on login
+    nginx.ingress.kubernetes.io/limit-connections: "20"
+    nginx.ingress.kubernetes.io/limit-rpm: "30"
+    # cert-manager automatic TLS certificate
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+    - hosts:
+        - talentheart.com
+        - www.talentheart.com
+      secretName: talentheart-tls-secret   # cert-manager creates this automatically
+
+  rules:
+    - host: talentheart.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service      # → nginx → gunicorn
+                port:
+                  number: 80
+
+    - host: www.talentheart.com
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: nginx-service
+                port:
+                  number: 80
